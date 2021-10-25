@@ -37,6 +37,7 @@ namespace Smoothing
             this.rbAverage = new System.Windows.Forms.RadioButton();
             this.rbMiddle = new System.Windows.Forms.RadioButton();
             this.rbGauss = new System.Windows.Forms.RadioButton();
+            this.rbSobel = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.pbSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbTarget)).BeginInit();
             this.SuspendLayout();
@@ -118,11 +119,23 @@ namespace Smoothing
             this.rbGauss.Text = "Gauss";
             this.rbGauss.UseVisualStyleBackColor = true;
             // 
+            // rbSobel
+            // 
+            this.rbSobel.AutoSize = true;
+            this.rbSobel.Location = new System.Drawing.Point(99, 470);
+            this.rbSobel.Name = "rbSobel";
+            this.rbSobel.Size = new System.Drawing.Size(68, 24);
+            this.rbSobel.TabIndex = 8;
+            this.rbSobel.TabStop = true;
+            this.rbSobel.Text = "Sobel";
+            this.rbSobel.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(855, 488);
+            this.ClientSize = new System.Drawing.Size(855, 527);
+            this.Controls.Add(this.rbSobel);
             this.Controls.Add(this.rbGauss);
             this.Controls.Add(this.rbMiddle);
             this.Controls.Add(this.rbAverage);
@@ -150,6 +163,7 @@ namespace Smoothing
         private System.Windows.Forms.RadioButton rbAverage;
         private System.Windows.Forms.RadioButton rbMiddle;
         private System.Windows.Forms.RadioButton rbGauss;
+        private System.Windows.Forms.RadioButton rbSobel;
     }
 }
 

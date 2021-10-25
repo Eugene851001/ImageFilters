@@ -13,9 +13,28 @@ namespace Smoothing
 
         private static double[,] gaussKernel = 
             { 
-                { 0.01, 0.08, 0.01},
-                { 0.08, 0.64, 0.01},
-                { 0.01, 0.08, 0.01}
+                //{ 0.01, 0.08, 0.01},
+                //{ 0.08, 0.64, 0.01},
+                //{ 0.01, 0.08, 0.01}
+                { 1, 1, 1},
+                { 1, 2, 1},
+                { 1, 1, 1}
+            };
+
+        private static Dictionary<int, double[,]> gaussKernels = new Dictionary<int, double[,]>();
+
+        private static int[,] sobelKernelY =
+            {
+                { -1, -2, -1},
+                {0, 0, 0 },
+                { 1, 2, 1}
+            };
+
+        private static int[,] sobelKernelX =
+            {
+                {-1, 0, 1 },
+                { -2, 0, 2},
+                { -1, 0, 1}
             };
 
         public static int[,] FilterAverage(int[,] source, int windowSize) =>
@@ -27,6 +46,8 @@ namespace Smoothing
         public static int[,] FilterGauss(int[,] source, int windowSize) =>
             HelpFilter(source, windowSize, GetGaussColor);
 
+        public static int[,] FilterSobel(int[,] source, int windowSize) =>
+            HelpFilter(source, windowSize, GetSobelColor);
 
         private static int[,] HelpFilter(int[,] source, int windowSize, Func<int[,], int, int, int, int> processPixel)
         {
@@ -130,18 +151,96 @@ namespace Smoothing
             double green = 0;
             double blue = 0;
             int k = 2 * m + 1;
+            double[,] kernel = GetGaussMatrix(1.5, m);
             for (int i = 0; i < k; i++)
             {
                 for (int j = 0; j < k; j++)
                 {
                     Color temp = Color.FromArgb(source[y + i - m, x + j - m]);
-                    red += gaussKernel[i, j] * temp.R;
-                    green += gaussKernel[i, j] * temp.G;
-                    blue += gaussKernel[i, j] * temp.B;
+                    red += kernel[i, j] * temp.R;
+                    green += kernel[i, j] * temp.G;
+                    blue += kernel[i, j] * temp.B;
                 }
             }
 
-            return Color.FromArgb((int)red, (int)green, (int)blue).ToArgb();
+            return Color.FromArgb(Math.Min((int)red, 255), Math.Min((int)green, 255), Math.Min((int)blue, 255)).ToArgb();
+        }
+
+        private static int GetSobel(int[,] source, int x, int y, int m)
+        {
+            int gx = 0;
+            int gy = 0;
+            int k = 2 * m + 1;
+            for (int i = 0; i < k; i++)
+            {
+                for (int j = 0; j < k; j++)
+                {
+                    gx += sobelKernelX[i, j] * source[y + i - m , x + j - m];
+                    gy += sobelKernelY[i, j] * source[y + i - m, x + j - m];
+                }
+            }
+
+            return (int)(Math.Sqrt(gx * gx + gy * gy));
+        }
+
+        private static int GetSobelColor(int[,] source, int x, int y, int m)
+        {
+            int gxRed = 0;
+            int gyRed = 0;
+
+            int gxGreen = 0;
+            int gyGreen = 0;
+
+            int gxBlue = 0;
+            int gyBlue = 0;
+
+            int k = 2 * m + 1;
+            for (int i = 0; i < k; i++)
+            {
+                for (int j = 0; j < k; j++)
+                {
+                    Color temp = Color.FromArgb(source[y + i - m, x + j - m]);
+                    
+                    gxRed += sobelKernelX[i, j] * temp.R;
+                    gyRed += sobelKernelY[i, j] * temp.R;
+
+                    gxGreen += sobelKernelX[i, j] * temp.G;
+                    gyGreen += sobelKernelY[i, j] * temp.G;
+
+                    gxBlue += sobelKernelX[i, j] * temp.B;
+                    gyBlue += sobelKernelY[i, j] * temp.B;
+                }
+            }
+
+            int red = Math.Min((int)GetDistance(gxRed, gyRed), 255);
+            int green = Math.Min((int)GetDistance(gxGreen, gyGreen), 255);
+            int blue = Math.Min((int)GetDistance(gxBlue, gyBlue), 255);
+
+            return Color.FromArgb(red, green, blue).ToArgb();
+        }
+
+        private static double GetDistance(int x, int y) => Math.Sqrt(x * x + y * y);
+
+        private static double[,] GetGaussMatrix(double sigma, int m)
+        {
+            if (gaussKernels.ContainsKey(m))
+            {
+                return gaussKernels[m];
+            }
+
+            int k = 2 * m + 1;
+            double sigmaSqr = sigma * sigma;
+            var result = new double[k, k];
+            for (int y = -m; y <= m; y++)
+            {
+                for (int x = -m; x <= m; x++)
+                {
+                    result[y + m, x + m] = 1 / (2 * Math.PI * sigmaSqr) * Math.Exp(-(x * x + y * y) / (2 * sigmaSqr)); 
+                }
+            }
+
+            gaussKernels.Add(m, result);
+            return result;
         }
 
     }

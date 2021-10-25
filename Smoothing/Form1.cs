@@ -51,9 +51,13 @@ namespace Smoothing
             {
                 newPixels = MatrixFilters.FilterMiddle(pixels, windowSize);
             }
+            else if (this.rbGauss.Checked)
+            {
+                newPixels = MatrixFilters.FilterGauss(pixels, windowSize);
+            }
             else
             {
-                newPixels = MatrixFilters.FilterGauss(pixels, 3);
+                newPixels = MatrixFilters.FilterSobel(pixels, 3);
             }
 
             var result = new Bitmap(this.source.Width, this.source.Height);
