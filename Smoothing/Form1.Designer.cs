@@ -38,6 +38,7 @@ namespace Smoothing
             this.rbMiddle = new System.Windows.Forms.RadioButton();
             this.rbGauss = new System.Windows.Forms.RadioButton();
             this.rbSobel = new System.Windows.Forms.RadioButton();
+            this.tbSigma = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbTarget)).BeginInit();
             this.SuspendLayout();
@@ -130,11 +131,19 @@ namespace Smoothing
             this.rbSobel.Text = "Sobel";
             this.rbSobel.UseVisualStyleBackColor = true;
             // 
+            // tbSigma
+            // 
+            this.tbSigma.Location = new System.Drawing.Point(515, 419);
+            this.tbSigma.Name = "tbSigma";
+            this.tbSigma.Size = new System.Drawing.Size(125, 27);
+            this.tbSigma.TabIndex = 9;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(855, 527);
+            this.Controls.Add(this.tbSigma);
             this.Controls.Add(this.rbSobel);
             this.Controls.Add(this.rbGauss);
             this.Controls.Add(this.rbMiddle);
@@ -164,6 +173,7 @@ namespace Smoothing
         private System.Windows.Forms.RadioButton rbMiddle;
         private System.Windows.Forms.RadioButton rbGauss;
         private System.Windows.Forms.RadioButton rbSobel;
+        private System.Windows.Forms.TextBox tbSigma;
     }
 }
 

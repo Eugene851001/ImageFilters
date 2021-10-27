@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Globalization;
 
 namespace Smoothing
 {
@@ -41,24 +42,29 @@ namespace Smoothing
         private void btProcess_Click(object sender, EventArgs e)
         {
             int windowSize = int.Parse(this.tbWindowSize.Text);
+
             int[,] pixels = this.source.GetPixels();
-            int[,] newPixels = null;
+            MatrixFilter filter;
+
             if (this.rbAverage.Checked)
             {
-                newPixels = MatrixFilters.FilterAverage(pixels, windowSize);
+                filter = new AverageFilter();
             }
             else if (this.rbMiddle.Checked)
             {
-                newPixels = MatrixFilters.FilterMiddle(pixels, windowSize);
+                filter = new MiddleFilter();
             }
             else if (this.rbGauss.Checked)
             {
-                newPixels = MatrixFilters.FilterGauss(pixels, windowSize);
+                double sigma = double.Parse(this.tbSigma.Text, CultureInfo.InvariantCulture);
+                filter = new GaussFilter(sigma);
             }
             else
             {
-                newPixels = MatrixFilters.FilterSobel(pixels, 3);
+                filter = new SobelFilter();
             }
+
+            int[,] newPixels = filter.Filter(pixels, windowSize);
 
             var result = new Bitmap(this.source.Width, this.source.Height);
             result = result.SetPixels(newPixels);
